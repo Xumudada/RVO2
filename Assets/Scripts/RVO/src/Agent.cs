@@ -98,6 +98,7 @@ namespace RVO
 
         internal RVOLayer layer = RVOLayer.DefaultAgent;
         internal RVOLayer colliderWith = RVOLayer.AllLayer;
+        internal int priority = 1;
 
         /**
          * <summary>Computes the neighbors of this agent.</summary>
@@ -474,7 +475,8 @@ namespace RVO
         {
             // 如果不考虑和对应单位的碰撞,这里就移除
             if (this == agent || (agent.layer & this.colliderWith) == 0) return;
-
+            //如果本身优先级大于对方,就不把对方当障碍
+            if (this.priority > agent.priority) return;
 
             float distSq = RVOMath.absSq(position - agent.position);
 

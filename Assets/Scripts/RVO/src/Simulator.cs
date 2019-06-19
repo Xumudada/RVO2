@@ -163,7 +163,7 @@ namespace RVO
             return addAgent(position, RVOLayer.DefaultAgent, RVOLayer.AllLayer);
         }
 
-        public int addAgent(Vector3 position,RVOLayer layer,RVOLayer collideWith)
+        public int addAgent(Vector3 position,RVOLayer layer,RVOLayer collideWith, int priority = 1)
         {
             if (defaultAgent == null)
             {
@@ -174,15 +174,16 @@ namespace RVO
             agent.id = stotalID;
             stotalID++;
             agent.maxNeighbors = defaultAgent.maxNeighbors;
-            agent.maxSpeed = defaultAgent.maxSpeed;
+            agent.maxSpeed = defaultAgent.maxSpeed * priority;
             agent.neighborDist = defaultAgent.neighborDist;
             agent.position = position;
             agent.radius = defaultAgent.radius;
             agent.timeHorizon = defaultAgent.timeHorizon;
             agent.timeHorizonObst = defaultAgent.timeHorizonObst;
-            agent.velocity = defaultAgent.velocity;
+            agent.velocity = defaultAgent.velocity * priority;
             agent.layer = layer;
             agent.colliderWith = collideWith;
+            agent.priority = priority;
             agents.Add(agent);
             onAddAgent();
             return agent.id;
@@ -402,6 +403,11 @@ namespace RVO
 
             return globalTime;
         }
+        public int getAgentPriority(int agentNo)
+        {
+            return agents[agentNo2indexDict[agentNo]].priority;
+        }
+
 
         /**
          * <summary>Returns the specified agent neighbor of the specified agent.
@@ -819,6 +825,7 @@ namespace RVO
          */
         public void setAgentMaxSpeed(int agentNo, float maxSpeed)
         {
+            Debug.Log("…Ë÷√ÀŸ∂»" + maxSpeed);
             agents[agentNo2indexDict[agentNo]].maxSpeed = maxSpeed;
         }
 

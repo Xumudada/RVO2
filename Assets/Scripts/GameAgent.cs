@@ -27,6 +27,9 @@ public class GameAgent : MonoBehaviour
             transform.position = new Vector3(pos.x, transform.position.y, pos.y);
             if (Math.Abs(vel.x) > 0.01f && Math.Abs(vel.y) > 0.01f)
                 transform.forward = new Vector3(vel.x, 0, vel.y).normalized;
+            Debug.Log("Priority " + Simulator.Instance.getAgentPriority(sid));
+            if (Simulator.Instance.getAgentPriority(sid) > 1)
+                Debug.Log("Count " + Simulator.Instance.getAgentNumAgentNeighbors(sid));
         }
 
         if (!Input.GetMouseButton(1))
@@ -38,7 +41,7 @@ public class GameAgent : MonoBehaviour
         Vector3 goalVector = GameMainManager.Instance.mousePosition - Simulator.Instance.getAgentPosition(sid);
         if (RVOMath.absSq(goalVector) > 1.0f)
         {
-            goalVector = RVOMath.normalize(goalVector);
+            goalVector = RVOMath.normalize(goalVector) * Simulator.Instance.getAgentMaxSpeed(sid);
         }
 
         Simulator.Instance.setAgentPrefVelocity(sid, goalVector);

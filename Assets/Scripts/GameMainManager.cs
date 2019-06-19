@@ -63,35 +63,42 @@ public class GameMainManager : SingletonBehaviour<GameMainManager>
             magentMap.Add(sid, ga);
         }
     }
-    void CreatAgent(RVOLayer layer,RVOLayer collideWith)
+    void CreatAgent(RVOLayer layer,RVOLayer collideWith,int priority = 1)
     {
-        int sid = Simulator.Instance.addAgent(mousePosition, layer, collideWith);
+        int sid = Simulator.Instance.addAgent(mousePosition, layer, collideWith, priority);
+       // Simulator.Instance.setAgentMaxSpeed(sid, Simulator.Instance.getAgentMaxSpeed(sid) * priority);
         if (sid >= 0)
         {
             GameObject go = LeanPool.Spawn(agentPrefab, new Vector3(mousePosition.x, 0, mousePosition.y), Quaternion.identity);
             GameAgent ga = go.GetComponent<GameAgent>();
+            go.GetComponentInChildren<MeshRenderer>().material.color = priority == 1 ? Color.white : Color.red; 
             Assert.IsNotNull(ga);
             ga.sid = sid;
             magentMap.Add(sid, ga);
         }
+        
     }
 
     // Update is called once per frame
     private void Update()
     {
         UpdateMousePosition();
-        if (Input.GetMouseButtonUp(0))
+        if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            if (Input.GetKey(KeyCode.Alpha1))
-            {
-                Debug.Log("创建第二层");
-                CreatAgent(RVOLayer.Layer2, ~RVOLayer.DefaultAgent);
-            }
-            else
-            {
-                Debug.Log("创建默认层");
-                CreatAgent(RVOLayer.DefaultAgent, ~RVOLayer.Layer2);
-            }
+            Debug.Log("创建默认层");
+            CreatAgent(RVOLayer.DefaultAgent, ~RVOLayer.Layer2);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            Debug.Log("创建第二层");
+            CreatAgent(RVOLayer.Layer2, ~RVOLayer.DefaultAgent);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            Debug.Log("创建默认层");
+            CreatAgent(RVOLayer.DefaultAgent, ~RVOLayer.Layer2,2);
         }
 
         Simulator.Instance.doStep();
